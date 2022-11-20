@@ -310,12 +310,10 @@ class TestTableObjectsStore(object):
     def test_object_referencecount_delete(self):
         t = CustomObjectStore(1)
         t2 = CustomObjectStore(2)
-        t_ref_count = 2
         t2_ref_count = 2
 
         tbl = Table({"a": [1], "b": [t]}, index="a")
-        t_ref_count += 1
-
+        t_ref_count = 2 + 1
         assert tbl.schema() == {"a": int, "b": object}
         assert tbl.size() == 1
 

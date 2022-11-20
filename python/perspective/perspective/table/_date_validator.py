@@ -160,8 +160,7 @@ class _PerspectiveDateValidator(object):
         # automatically localize any conversion to `datetime.datetime`
         # from C++ to Python.
         seconds_timestamp = converter(timetuple) + obj.microsecond / 1000000.0
-        ms_timestamp = int(seconds_timestamp * 1000)
-        return ms_timestamp
+        return int(seconds_timestamp * 1000)
 
     def format(self, datestring):
         """Return either t_dtype.DTYPE_DATE or t_dtype.DTYPE_TIME depending on

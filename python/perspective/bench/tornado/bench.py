@@ -158,15 +158,14 @@ class PerspectiveTornadoBenchmark(object):
         )
 
         logging.info(
-            "Interpolating {} over {} runs, range: {} to {}".format(
-                self.interpolate_attr, self.interpolate_range, start, end
-            )
+            f"Interpolating {self.interpolate_attr} over {self.interpolate_range} runs, range: {start} to {end}"
         )
 
-        for i in range(0, self.interpolate_range):
+
+        for _ in range(self.interpolate_range):
             value = start
             setattr(self, self.interpolate_attr, value)
-            logging.info("Interpolating {}: {}".format(self.interpolate_attr, value))
+            logging.info(f"Interpolating {self.interpolate_attr}: {value}")
             self._run_single(client_func)
             start = start + self.interpolate_step
 
@@ -189,18 +188,16 @@ class PerspectiveTornadoBenchmark(object):
         delay = self.delay_time * client_id
 
         if delay > 0:
-            logging.info(
-                "Delaying client {} execution by {} seconds".format(client_id, delay)
-            )
+            logging.info(f"Delaying client {client_id} execution by {delay} seconds")
             await asyncio.sleep(delay)
 
         psp_client = await perspective.client.tornado.websocket(self.url)
         results = []
 
-        for i in range(self.num_runs):
+        for _ in range(self.num_runs):
             result = await self.task(psp_client)
             results.append(result)
             if self.sleep_time > 0:
-                logging.info("Sleeping for {} seconds".format(self.sleep_time))
+                logging.info(f"Sleeping for {self.sleep_time} seconds")
                 await asyncio.sleep(self.sleep_time)
         return numpy.array(results).flatten()

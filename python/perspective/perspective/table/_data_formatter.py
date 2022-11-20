@@ -113,9 +113,7 @@ def to_format(options, view, output_format):
                 pkeys = get_pkeys_from_data_slice_two(data_slice, ridx, 0)
 
             if output_format == "records":
-                data[-1]["__INDEX__"] = []
-                for pkey in pkeys:
-                    data[-1]["__INDEX__"].append(pkey)
+                data[-1]["__INDEX__"] = list(pkeys)
             elif output_format in ("dict", "numpy"):
                 # ensure that `__INDEX__` has the same number of rows as
                 # returned dataset
@@ -131,9 +129,7 @@ def to_format(options, view, output_format):
                 pkeys = get_pkeys_from_data_slice_zero(data_slice, ridx, 0)
 
             if output_format == "records":
-                data[-1]["__ID__"] = []
-                for pkey in pkeys:
-                    data[-1]["__ID__"].append(pkey)
+                data[-1]["__ID__"] = list(pkeys)
             elif output_format in ("dict", "numpy"):
                 if len(pkeys) == 0:
                     data["__ID__"].append([])
@@ -194,12 +190,11 @@ def _to_format_helper(view, options=None):
         )
 
     raw_names = data_slice.get_column_names()
-    column_names = []
+    column_names = [
+        COLUMN_SEPARATOR_STRING.join([path.to_string(False) for path in n])
+        for n in raw_names
+    ]
 
-    for n in raw_names:
-        column_names.append(
-            COLUMN_SEPARATOR_STRING.join([path.to_string(False) for path in n])
-        )
 
     return opts, column_names, data_slice
 

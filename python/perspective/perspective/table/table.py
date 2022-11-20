@@ -61,13 +61,9 @@ class Table(object):
             self._is_arrow = True
 
             if len(data) > 0 and data[0] == ",":
-                data = "_" + data
+                data = f"_{data}"
 
-        if self._is_arrow:
-            _accessor = data
-        else:
-            _accessor = _PerspectiveAccessor(data)
-
+        _accessor = data if self._is_arrow else _PerspectiveAccessor(data)
         self._date_validator = _PerspectiveDateValidator()
 
         self._limit = limit
@@ -161,14 +157,13 @@ class Table(object):
         s = self._table.get_schema()
         columns = s.columns()
         types = s.types()
-        schema = {}
-        for i in range(0, len(columns)):
-            if columns[i] != "psp_okey":
-                if as_string:
-                    schema[columns[i]] = _dtype_to_str(types[i])
-                else:
-                    schema[columns[i]] = _dtype_to_pythontype(types[i])
-        return schema
+        return {
+            columns[i]: _dtype_to_str(types[i])
+            if as_string
+            else _dtype_to_pythontype(types[i])
+            for i in range(len(columns))
+            if columns[i] != "psp_okey"
+        }
 
     def validate_expressions(self, expressions, as_string=False):
         """Returns an :obj:`dict` with two keys: "expression_schema", which is
@@ -207,10 +202,11 @@ class Table(object):
             validated["expression_schema"][alias] = expression_schema[alias]
 
         for (alias, error) in expression_errors.items():
-            error_dict = {}
-            error_dict["error_message"] = error.error_message
-            error_dict["line"] = error.line
-            error_dict["column"] = error.column
+            error_dict = {
+                "error_message": error.error_message,
+                "line": error.line,
+                "column": error.column,
+            }
 
             validated["errors"][alias] = error_dict
 
@@ -242,10 +238,10 @@ class Table(object):
         else:
             filter_op = filter[1]
 
-        if (
-            filter_op == t_filter_op.FILTER_OP_IS_NULL
-            or filter_op == t_filter_op.FILTER_OP_IS_NOT_NULL
-        ):
+        if filter_op in [
+            t_filter_op.FILTER_OP_IS_NULL,
+            t_filter_op.FILTER_OP_IS_NOT_NULL,
+        ]:
             # null/not null operators don't need a comparison value
             return True
 
@@ -256,9 +252,12 @@ class Table(object):
 
         schema = self.schema()
         in_schema = schema.get(filter[0], None)
-        if in_schema and (schema[filter[0]] == date or schema[filter[0]] == datetime):
-            if isinstance(value, str):
-                value = self._date_validator.parse(value)
+        if (
+            in_schema
+            and schema[filter[0]] in [date, datetime]
+            and isinstance(value, str)
+        ):
+            value = self._date_validator.parse(value)
 
         return value is not None
 
@@ -294,7 +293,7 @@ class Table(object):
             _is_arrow = True
 
             if len(data) > 0 and data[0] == ",":
-                data = "_" + data
+                data = f"_{data}"
 
         if _is_arrow:
             _accessor = data

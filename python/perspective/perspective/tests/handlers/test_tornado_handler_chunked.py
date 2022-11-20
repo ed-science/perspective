@@ -21,11 +21,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -55,8 +56,7 @@ class TestPerspectiveTornadoHandlerChunked(object):
         """Connect and initialize a websocket client connection to the
         Perspective tornado server.
         """
-        client = await websocket("ws://127.0.0.1:{}/websocket".format(port))
-        return client
+        return await websocket(f"ws://127.0.0.1:{port}/websocket")
 
     @pytest.mark.gen_test(run_sync=False)
     async def test_tornado_handler_create_view_to_arrow_chunked(
@@ -88,7 +88,7 @@ class TestPerspectiveTornadoHandlerChunked(object):
 
         output = await view.to_arrow()
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()
@@ -116,7 +116,7 @@ class TestPerspectiveTornadoHandlerChunked(object):
 
         output = await output_fut
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()

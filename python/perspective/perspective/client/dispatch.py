@@ -15,7 +15,7 @@ def async_queue(client, name, method, cmd, *args, **kwargs):
     the client."""
     arguments = list(args)
 
-    if len(kwargs) > 0:
+    if kwargs:
         arguments.append(kwargs)
 
     msg = {
@@ -41,7 +41,7 @@ def subscribe(client, name, method, cmd, *args, **kwargs):
         if callable(arguments[i]):
             callback = arguments.pop(i)
 
-    if len(kwargs) > 0:
+    if kwargs:
         arguments.append(kwargs)
 
     # Instead of storing in a global map, store the callbacks on the
@@ -72,7 +72,7 @@ def unsubscribe(client, name, method, cmd, *args, **kwargs):
         if callable(arguments[i]):
             callback = arguments.pop(i)
 
-    if len(kwargs) > 0:
+    if kwargs:
         arguments.append(kwargs)
 
     callback_id = client._callback_cache.get(callback)

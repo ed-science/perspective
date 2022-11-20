@@ -75,7 +75,7 @@ class TestTableArrow(object):
     # streams
 
     def test_table_arrow_loads_int_stream(self, util):
-        data = [list(range(10)) for i in range(4)]
+        data = [list(range(10)) for _ in range(4)]
         arrow_data = util.make_arrow(names, data)
         tbl = Table(arrow_data)
         assert tbl.size() == 10
@@ -93,10 +93,7 @@ class TestTableArrow(object):
         }
 
     def test_table_arrow_loads_float_stream(self, util):
-        data = [
-            [i for i in range(10)],
-            [i * 1.5 for i in range(10)]
-        ]
+        data = [list(range(10)), [i * 1.5 for i in range(10)]]
         arrow_data = util.make_arrow(["a", "b"], data)
         tbl = Table(arrow_data)
         assert tbl.size() == 10
@@ -124,9 +121,7 @@ class TestTableArrow(object):
         }
 
     def test_table_arrow_loads_bool_stream(self, util):
-        data = [
-            [True if i % 2 == 0 else False for i in range(10)]
-        ]
+        data = [[i % 2 == 0 for i in range(10)]]
         arrow_data = util.make_arrow(["a"], data)
         tbl = Table(arrow_data)
         assert tbl.size() == 10
@@ -343,7 +338,7 @@ class TestTableArrow(object):
     # legacy
 
     def test_table_arrow_loads_int_legacy(self, util):
-        data = [list(range(10)) for i in range(4)]
+        data = [list(range(10)) for _ in range(4)]
         arrow_data = util.make_arrow(names, data, legacy=True)
         tbl = Table(arrow_data)
         assert tbl.size() == 10
@@ -355,10 +350,7 @@ class TestTableArrow(object):
         }
 
     def test_table_arrow_loads_float_legacy(self, util):
-        data = [
-            [i for i in range(10)],
-            [i * 1.5 for i in range(10)]
-        ]
+        data = [list(range(10)), [i * 1.5 for i in range(10)]]
         arrow_data = util.make_arrow(["a", "b"], data, legacy=True)
         tbl = Table(arrow_data)
         assert tbl.size() == 10
@@ -387,9 +379,7 @@ class TestTableArrow(object):
         }
 
     def test_table_arrow_loads_bool_legacy(self, util):
-        data = [
-            [True if i % 2 == 0 else False for i in range(10)]
-        ]
+        data = [[i % 2 == 0 for i in range(10)]]
         arrow_data = util.make_arrow(["a"], data, legacy=True)
         tbl = Table(arrow_data)
         assert tbl.size() == 10

@@ -26,10 +26,7 @@ BOOLEAN_LITERAL_REGEX = re.compile(r"([a-zA-Z_]+[a-zA-Z0-9_]*)")
 def _extract_type(type, typemap):
     rval = typemap.get(type)
 
-    if rval is None:
-        return None
-
-    return rval
+    return None if rval is None else rval
 
 
 def _dtype_to_pythontype(dtype):
@@ -142,9 +139,7 @@ def _replace_interned_param(match_obj):
 
     # from fn(param, intern('string'), param, param...) to
     # fn (param, 'string', ...)
-    return "{}'{}'{}".format(
-        full[0:intern_idx], value, full[intern_idx + len(intern_fn) :]
-    )
+    return f"{full[:intern_idx]}'{value}'{full[intern_idx + len(intern_fn):]}"
 
 
 def _parse_expression_strings(expressions):
@@ -173,12 +168,7 @@ def _parse_expression_strings(expressions):
         # user typed it into Perspective
         parsed = expression
 
-        if alias_match:
-            alias = alias_match.group(1).strip()
-        else:
-            # Expression itself is the alias
-            alias = expression
-
+        alias = alias_match[1].strip() if alias_match else expression
         # we need to be able to modify the running_cidx inside of every call to
         # replacer_fn - must pass by reference unfortunately
         running_cidx = [0]

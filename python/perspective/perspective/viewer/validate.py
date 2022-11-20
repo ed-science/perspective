@@ -92,19 +92,18 @@ def validate_sort(sort):
     elif isinstance(sort, str):
         sort = [sort]
 
-    if isinstance(sort, list):
-        if len(sort) > 0 and not isinstance(sort[0], list):
-            sort = [sort]
-        ret = []
-        for col, s in sort:
-            if isinstance(s, Sort):
-                s = s.value
-            elif not isinstance(s, str) or s not in Sort.options():
-                raise PerspectiveError("Unrecognized sort direction: %s", s)
-            ret.append([col, s])
-        return ret
-    else:
+    if not isinstance(sort, list):
         raise PerspectiveError("Cannot parse sort type: %s", str(type(sort)))
+    if len(sort) > 0 and not isinstance(sort[0], list):
+        sort = [sort]
+    ret = []
+    for col, s in sort:
+        if isinstance(s, Sort):
+            s = s.value
+        elif not isinstance(s, str) or s not in Sort.options():
+            raise PerspectiveError("Unrecognized sort direction: %s", s)
+        ret.append([col, s])
+    return ret
 
 
 def validate_filter(filters):
@@ -119,34 +118,27 @@ def validate_filter(filters):
         # wrap
         filters = [filters]
 
-    if isinstance(filters, list):
-        for f in filters:
-            if not isinstance(f, list):
-                raise PerspectiveError("`filter` kwarg must be a list!")
+    if not isinstance(filters, list):
+        raise PerspectiveError(f"Cannot parse filter type: {str(type(filters))}")
+    for f in filters:
+        if not isinstance(f, list):
+            raise PerspectiveError("`filter` kwarg must be a list!")
 
-            for i, item in enumerate(f):
-                if i == 1:
-                    if item not in ALL_FILTERS:
+        for i, item in enumerate(f):
+            if i == 1:
+                if item not in ALL_FILTERS:
+                    raise PerspectiveError(f"Unrecognized filter operator: {item}")
+                elif item not in ("is null", "is not null"):
+                    if len(f) != 3:
                         raise PerspectiveError(
-                            "Unrecognized filter operator: {}".format(item)
+                            f"Cannot parse filter - {item} operator must have a comparison value."
                         )
-                    elif item not in ("is null", "is not null"):
-                        if len(f) != 3:
-                            raise PerspectiveError(
-                                "Cannot parse filter - {} operator must have a comparison value.".format(
-                                    item
-                                )
-                            )
-                else:
-                    if item.__class__.__name__ == "date":
-                        f[i] = item.strftime("%m/%d/%Y")
-                    elif isinstance(item, datetime):
-                        f[i] = item.strftime("%Y-%m-%d %H:%M:%S")
-        return filters
-    else:
-        raise PerspectiveError(
-            "Cannot parse filter type: {}".format(str(type(filters)))
-        )
+
+            elif item.__class__.__name__ == "date":
+                f[i] = item.strftime("%m/%d/%Y")
+            elif isinstance(item, datetime):
+                f[i] = item.strftime("%Y-%m-%d %H:%M:%S")
+    return filters
 
 
 def validate_expressions(expressions):
@@ -157,17 +149,18 @@ def validate_expressions(expressions):
         # wrap in a list and return
         return [expressions]
 
-    if isinstance(expressions, list):
-        for expr in expressions:
-            if not isinstance(expr, str):
-                raise PerspectiveError(
-                    "Cannot parse non-string expression: {}".format(str(type(expr)))
-                )
-        return expressions
-    else:
+    if not isinstance(expressions, list):
         raise PerspectiveError(
-            "Cannot parse expressions of type: {}".format(str(type(expressions)))
+            f"Cannot parse expressions of type: {str(type(expressions))}"
         )
+
+    for expr in expressions:
+        if not isinstance(expr, str):
+            raise PerspectiveError(
+                f"Cannot parse non-string expression: {str(type(expr))}"
+            )
+
+    return expressions
 
 
 def validate_plugin_config(plugin_config):

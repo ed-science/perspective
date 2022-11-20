@@ -53,7 +53,7 @@ class View(object):
     """
 
     def __init__(self, Table, **kwargs):
-        self._name = "py_" + str(random())
+        self._name = f"py_{str(random())}"
         self._table = Table
         self._config = ViewConfig(**kwargs)
         self._sides = self.sides()
@@ -132,10 +132,7 @@ class View(object):
             :obj:`int`: 0 <= N <= 2
         """
         if len(self._config.get_group_by()) > 0 or len(self._config.get_split_by()) > 0:
-            if len(self._config.get_split_by()) > 0:
-                return 2
-            else:
-                return 1
+            return 2 if len(self._config.get_split_by()) > 0 else 1
         else:
             return 0
 
@@ -218,14 +215,10 @@ class View(object):
             :obj:`list` of :obj`str`: Aggregated column names.
         """
         paths = self._view.column_paths()
-        string_paths = []
-
-        for path in paths:
-            string_paths.append(
-                COLUMN_SEPARATOR_STRING.join([p.to_string(False) for p in path])
-            )
-
-        return string_paths
+        return [
+            COLUMN_SEPARATOR_STRING.join([p.to_string(False) for p in path])
+            for path in paths
+        ]
 
     def schema(self, as_string=False):
         """The schema of this :class:`~perspective.View`, which is a key-value
@@ -311,14 +304,12 @@ class View(object):
 
         if mode not in ["none", "row"]:
             raise ValueError(
-                'Invalid update mode {} - valid on_update modes are "none" or "row"'.format(
-                    mode
-                )
+                f'Invalid update mode {mode} - valid on_update modes are "none" or "row"'
             )
 
-        if mode == "row":
-            if not self._view._get_deltas_enabled():
-                self._view._set_deltas_enabled(True)
+
+        if mode == "row" and not self._view._get_deltas_enabled():
+            self._view._set_deltas_enabled(True)
 
         wrapped_callback = partial(
             self._wrapped_on_update_callback, mode=mode, callback=callback
@@ -644,12 +635,8 @@ class View(object):
 
     def _num_hidden_cols(self):
         """Returns the number of columns that are sorted but not shown."""
-        hidden = 0
         columns = self._config.get_columns()
-        for sort in self._config.get_sort():
-            if sort[0] not in columns:
-                hidden += 1
-        return hidden
+        return sum(sort[0] not in columns for sort in self._config.get_sort())
 
     def _wrapped_on_update_callback(self, **kwargs):
         """Provide the user-defined callback function with additional metadata

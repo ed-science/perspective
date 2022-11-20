@@ -28,8 +28,8 @@ file_path = os.path.join(
 
 def static_nodemodules_handler(rest_of_path):
     if rest_of_path.startswith("@finos"):
-        return FileResponse("../../node_modules/{}".format(rest_of_path))
-    return FileResponse("../../node_modules/@finos/{}".format(rest_of_path))
+        return FileResponse(f"../../node_modules/{rest_of_path}")
+    return FileResponse(f"../../node_modules/@finos/{rest_of_path}")
 
 
 def perspective_thread(manager):

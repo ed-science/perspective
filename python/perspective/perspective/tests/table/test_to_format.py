@@ -871,7 +871,7 @@ class TestToFormat(object):
         tbl = Table(data)
         assert tbl.schema()["a"] == date
         view = tbl.view()
-        assert view.to_csv() == '"a","b"\n{},2\n{},4\n'.format(dt_str, dt_str)
+        assert view.to_csv() == f'"a","b"\n{dt_str},2\n{dt_str},4\n'
 
     def test_to_csv_datetime(self):
         dt = datetime(2019, 3, 15, 20, 30, 59, 6000)
@@ -879,7 +879,7 @@ class TestToFormat(object):
         data = [{"a": dt, "b": 2}, {"a": dt, "b": 4}]
         tbl = Table(data)
         view = tbl.view()
-        assert view.to_csv() == '"a","b"\n{},2\n{},4\n'.format(dt_str, dt_str)
+        assert view.to_csv() == f'"a","b"\n{dt_str},2\n{dt_str},4\n'
 
     def test_to_csv_bool(self):
         data = [{"a": True, "b": False}, {"a": True, "b": False}]

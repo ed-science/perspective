@@ -24,11 +24,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -57,7 +58,7 @@ class TestPerspectiveAIOHTTPHandler(object):
         """
         client = await aiohttp_client(app)
         return await websocket(
-            "http://{}:{}/websocket".format(client.host, client.port), client.session
+            f"http://{client.host}:{client.port}/websocket", client.session
         )
 
     @pytest.mark.asyncio
@@ -234,12 +235,12 @@ class TestPerspectiveAIOHTTPHandler(object):
 
         assert size == 10
 
-        table.remove([i for i in range(5)])
+        table.remove(list(range(5)))
 
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {"a": [i for i in range(5, 10)]}
+        assert output == {"a": list(range(5, 10))}
 
     @pytest.mark.asyncio
     async def test_aiohttp_handler_create_view(self, app, aiohttp_client):
@@ -252,9 +253,7 @@ class TestPerspectiveAIOHTTPHandler(object):
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {
-            "a": [i for i in range(10)],
-        }
+        assert output == {"a": list(range(10))}
 
     @pytest.mark.asyncio
     async def test_aiohttp_handler_create_view_errors(self, app, aiohttp_client):
@@ -298,7 +297,7 @@ class TestPerspectiveAIOHTTPHandler(object):
 
         output = await view.to_arrow()
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()

@@ -42,11 +42,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -91,8 +92,7 @@ class TestPerspectiveTornadoHandlerAsyncMode(object):
         """Connect and initialize a websocket client connection to the
         Perspective tornado server.
         """
-        client = await websocket("ws://127.0.0.1:{}/websocket".format(port))
-        return client
+        return await websocket(f"ws://127.0.0.1:{port}/websocket")
 
     @pytest.mark.gen_test(run_sync=False)
     async def test_tornado_handler_async_manager_thread(
@@ -106,10 +106,8 @@ class TestPerspectiveTornadoHandlerAsyncMode(object):
         table = client.open_table(table_name)
         view = await table.view()
         reqs = []
-        for x in range(10):
-            reqs.append(table.update(data))
-            reqs.append(view.to_arrow())
-
+        for _ in range(10):
+            reqs.extend((table.update(data), view.to_arrow()))
         await asyncio.gather(*reqs)
         # views = await asyncio.gather(*[table.view() for _ in range(5)])
         # outputs = await asyncio.gather(*[view.to_arrow() for view in views])

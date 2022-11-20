@@ -29,4 +29,4 @@ class Sort(Enum):
 
     @staticmethod
     def options():
-        return list(c.value for c in Sort)
+        return [c.value for c in Sort]

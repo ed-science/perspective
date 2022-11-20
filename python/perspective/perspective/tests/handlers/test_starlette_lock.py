@@ -26,11 +26,12 @@ from perspective.client.starlette_test import websocket
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 

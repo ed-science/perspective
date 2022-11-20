@@ -77,15 +77,21 @@ class TestPerspectiveSession(object):
         for i, session in enumerate(sessions):
             # IDs have to conflict - each viewer will send the first message as
             # ID = 1, so we need to make sure we handle that.
-            msg = {"id": 1, "table_name": "table1", "view_name": "view" + str(i), "cmd": "view"}
+            msg = {
+                "id": 1,
+                "table_name": "table1",
+                "view_name": f"view{str(i)}",
+                "cmd": "view",
+            }
+
             session.process(msg, self.post)
 
         manager_views = list(manager._views.keys())
-        for key in ["view" + str(i) for i in range(5)]:
+        for key in [f"view{str(i)}" for i in range(5)]:
             assert key in manager_views
 
         for i, session in enumerate(sessions):
-            view = manager._get_view("view" + str(i))
+            view = manager._get_view(f"view{str(i)}")
             assert view._client_id == session.client_id
 
         # arbitrarily do an update
@@ -95,7 +101,13 @@ class TestPerspectiveSession(object):
 
         # should reflect in all sessions
         for i, session in enumerate(sessions):
-            to_dict_message = {"id": 3, "name": "view" + str(i), "cmd": "view_method", "method": "to_dict"}
+            to_dict_message = {
+                "id": 3,
+                "name": f"view{str(i)}",
+                "cmd": "view_method",
+                "method": "to_dict",
+            }
+
             session.process(to_dict_message, handle_to_dict)
 
         assert s.get() == 5
@@ -174,15 +186,21 @@ class TestPerspectiveSession(object):
         for i, session in enumerate(sessions):
             # IDs have to conflict - each viewer will send the first message as
             # ID = 1, so we need to make sure we handle that.
-            msg = {"id": 2, "table_name": "table1", "view_name": "view" + str(i), "cmd": "view"}
+            msg = {
+                "id": 2,
+                "table_name": "table1",
+                "view_name": f"view{str(i)}",
+                "cmd": "view",
+            }
+
             session.process(msg, self.post)
 
         manager_views = list(manager._views.keys())
-        for key in ["view" + str(i) for i in range(5)]:
+        for key in [f"view{str(i)}" for i in range(5)]:
             assert key in manager_views
 
         for i, session in enumerate(sessions):
-            view = manager._get_view("view" + str(i))
+            view = manager._get_view(f"view{str(i)}")
             assert view._client_id == session.client_id
 
         def callback(updated):
@@ -208,7 +226,7 @@ class TestPerspectiveSession(object):
 
         # create a view and an on_update on each session
         for i, session in enumerate(sessions):
-            view_name = "view" + str(i)
+            view_name = f"view{str(i)}"
             # IDs have to conflict - each viewer will send the first message as
             # ID = 1, so we need to make sure we handle that.
             msg = {"id": 2, "table_name": "table1", "view_name": view_name, "cmd": "view"}
@@ -237,9 +255,9 @@ class TestPerspectiveSession(object):
         # make sure the view is gone - but not the table
         assert "table1" in manager._tables
 
-        assert "view" + str(random_session_id) not in manager._views.keys()
+        assert f"view{random_session_id}" not in manager._views.keys()
         assert len(manager._views.keys()) == 4
-        
+
         for callback in manager._callback_cache:
             assert callback["client_id"] != random_client_id
 

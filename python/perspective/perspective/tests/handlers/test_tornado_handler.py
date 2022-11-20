@@ -21,11 +21,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -55,8 +56,7 @@ class TestPerspectiveTornadoHandler(object):
         """Connect and initialize a websocket client connection to the
         Perspective tornado server.
         """
-        client = await websocket("ws://127.0.0.1:{0}/websocket".format(port))
-        return client
+        return await websocket("ws://127.0.0.1:{0}/websocket".format(port))
 
     @pytest.mark.gen_test(run_sync=False)
     async def test_tornado_handler_init_terminate(self, app, http_client, http_port):
@@ -235,12 +235,12 @@ class TestPerspectiveTornadoHandler(object):
 
         assert size == 10
 
-        table.remove([i for i in range(5)])
+        table.remove(list(range(5)))
 
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {"a": [i for i in range(5, 10)]}
+        assert output == {"a": list(range(5, 10))}
 
     @pytest.mark.gen_test(run_sync=False)
     async def test_tornado_handler_create_view(
@@ -255,9 +255,7 @@ class TestPerspectiveTornadoHandler(object):
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {
-            "a": [i for i in range(10)],
-        }
+        assert output == {"a": list(range(10))}
 
     @pytest.mark.gen_test(run_sync=False)
     async def test_tornado_handler_create_view_errors(
@@ -305,7 +303,7 @@ class TestPerspectiveTornadoHandler(object):
 
         output = await view.to_arrow()
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()

@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 def truncate_patch_version(version):
     """Return just the major and minor versions from `version`."""
     split_version = version.split(".")
-    return "{}.{}".format(split_version[0], split_version[1])
+    return f"{split_version[0]}.{split_version[1]}"
 
 
 def write_version():
@@ -34,7 +34,7 @@ def write_version():
     with open(os.path.realpath(package_json_path), "r") as f:
         version = json.load(f)["version"]
 
-    logging.info("Updating `perspective-python` to version `{}`".format(version))
+    logging.info(f"Updating `perspective-python` to version `{version}`")
 
     version_py_path = os.path.join(here, "..", "perspective", "core", "_version.py")
 
@@ -42,11 +42,13 @@ def write_version():
     truncated = truncate_patch_version(version)
 
     with open(os.path.realpath(version_py_path), "w") as f:
-        f.write('__version__ = "{}"\n'.format(version))
-        f.write('major_minor_version = "{}"\n'.format(truncated))
+        f.write(f'__version__ = "{version}"\n')
+        f.write(f'major_minor_version = "{truncated}"\n')
 
-    logging.info("`perspective-python` updated to version `{}`".format(version))
-    logging.info("`PerspectiveWidget` now requires `perspective-jupyterlab` version `~{}`".format(truncated))
+    logging.info(f"`perspective-python` updated to version `{version}`")
+    logging.info(
+        f"`PerspectiveWidget` now requires `perspective-jupyterlab` version `~{truncated}`"
+    )
 
 
 if __name__ == "__main__":

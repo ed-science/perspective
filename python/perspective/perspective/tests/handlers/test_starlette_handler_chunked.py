@@ -27,11 +27,12 @@ from perspective.client.starlette_test import websocket
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -88,7 +89,7 @@ class TestPerspectiveStarletteHandlerChunked(object):
 
         output = await view.to_arrow()
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()
@@ -115,7 +116,7 @@ class TestPerspectiveStarletteHandlerChunked(object):
 
         output = await output_fut
 
-        for i in range(10):
+        for _ in range(10):
             await table.update(output)
 
         size2 = await table.size()

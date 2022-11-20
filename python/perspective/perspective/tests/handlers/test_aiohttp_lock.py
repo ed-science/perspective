@@ -23,11 +23,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -56,7 +57,7 @@ class TestPerspectiveAIOHTTPHandlerChunked(object):
         """
         client = await aiohttp_client(app)
         return await websocket(
-            "http://{}:{}/websocket".format(client.host, client.port), client.session
+            f"http://{client.host}:{client.port}/websocket", client.session
         )
 
     @pytest.mark.asyncio

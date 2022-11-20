@@ -68,11 +68,10 @@ def deconstruct_pandas(data, kwargs=None):
         data.index = data.index.to_timestamp()
 
     # convert categories to str
-    if isinstance(data, pd.DataFrame):
-        if hasattr(pd, "CategoricalDtype"):
-            for k, v in data.dtypes.items():
-                if isinstance(v, pd.CategoricalDtype):
-                    data[k] = data[k].astype(str)
+    if isinstance(data, pd.DataFrame) and hasattr(pd, "CategoricalDtype"):
+        for k, v in data.dtypes.items():
+            if isinstance(v, pd.CategoricalDtype):
+                data[k] = data[k].astype(str)
 
     if (
         isinstance(data, pd.DataFrame)
@@ -124,9 +123,9 @@ def deconstruct_pandas(data, kwargs=None):
         new_names = list(data.index.names)
         for j, val in enumerate(data.index.names):
             if val is None:
-                new_names[j] = "index" if i == 0 else "index-{}".format(i)
+                new_names[j] = "index" if i == 0 else f"index-{i}"
                 i += 1
-                # kwargs['group_by'].append(str(new_names[j]))
+                            # kwargs['group_by'].append(str(new_names[j]))
             else:
                 if str(val) not in kwargs["group_by"]:
                     kwargs["split_by"].append(str(val))
@@ -166,7 +165,7 @@ def deconstruct_pandas(data, kwargs=None):
         new_names = list(data.index.names)
         for j, val in enumerate(data.index.names):
             if val is None:
-                new_names[j] = "index" if i == 0 else "index-{}".format(i)
+                new_names[j] = "index" if i == 0 else f"index-{i}"
                 i += 1
                 if push_group_by:
                     kwargs["group_by"].append(str(new_names[j]))

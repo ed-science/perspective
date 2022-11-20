@@ -43,8 +43,8 @@ class ViewConfig(object):
         self._filter = self._config.get("filter", [])
         self._expressions = self._config.get("expressions", [])
         self._filter_op = self._config.get("filter_op", "and")
-        self.group_by_depth = self._config.get("group_by_depth", None)
-        self.split_by_depth = self._config.get("split_by_depth", None)
+        self.group_by_depth = self._config.get("group_by_depth")
+        self.split_by_depth = self._config.get("split_by_depth")
 
     def get_group_by(self):
         """The columns used as

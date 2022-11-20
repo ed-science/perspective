@@ -159,25 +159,27 @@ class TestViewExpression(object):
         assert view.expression_schema() == {"computed": float}
 
     def test_view_expression_string_per_page(self):
-        table = Table({"a": [i for i in range(100)]})
+        table = Table({"a": list(range(100))})
         big_strings = [randstr(6400) for _ in range(4)]
         view = table.view(
             expressions=[
-                "//computed{}\nvar x := '{}'; lower(x)".format(i, big_strings[i]) for i in range(4)
+                f"//computed{i}\nvar x := '{big_strings[i]}'; lower(x)"
+                for i in range(4)
             ]
         )
+
 
         result = view.to_columns()
         schema = view.expression_schema()
 
         for i in range(4):
-            name = "computed{}".format(i)
+            name = f"computed{i}"
             res = big_strings[i].lower()
             assert schema[name] == str
             assert result[name] == [res for _ in range(100)]
 
     def test_view_expression_string_page_stress(self):
-        table = Table({"a": [i for i in range(100)]})
+        table = Table({"a": list(range(100))})
         big_strings = [
             "".join(["a" for _ in range(640)]),
             "".join(["b" for _ in range(640)]),
@@ -305,7 +307,7 @@ class TestViewExpression(object):
             expression_schema = view.expression_schema()
             result = view.to_columns()
 
-            for expr in output_map.keys():
+            for expr in output_map:
                 assert expression_schema[expr] == str
                 assert result[expr] == [output_map[expr] for _ in range(4)]
 
@@ -1587,11 +1589,7 @@ class TestViewExpression(object):
         seconds_timestamp = mktime(dt.timetuple()) + dt.microsecond / 1000000.0
         ms_timestamp = int(seconds_timestamp * 1000)
 
-        view = table.view(
-            expressions=[
-                '// computed\n datetime({})'.format(ms_timestamp)
-            ]
-        )
+        view = table.view(expressions=[f'// computed\n datetime({ms_timestamp})'])
 
         assert view.expression_schema() == {
             "computed": datetime
@@ -1682,7 +1680,15 @@ class TestViewExpression(object):
     
     def test_view_regex_email(self):
         endings = ["com", "net", "co.uk", "ie", "me", "io", "co"]
-        data = ["{}@{}.{}".format(randstr(30, ascii_letters + "0123456789" + "._-"), randstr(10), choices(endings, k=1)[0]) for _ in range(100)]
+        data = [
+            "{}@{}.{}".format(
+                randstr(30, f"{ascii_letters}0123456789._-"),
+                randstr(10),
+                choices(endings, k=1)[0],
+            )
+            for _ in range(100)
+        ]
+
         table = Table({"a": data})
         expressions = [
             "// address\nsearch(\"a\", '^([a-zA-Z0-9._-]+)@')",
@@ -1704,8 +1710,8 @@ class TestViewExpression(object):
 
         for i in range(100):
             source = results["a"][i]
-            expected_address = re.match(r"^([a-zA-Z0-9._-]+)@", source).group(1)
-            expected_domain = re.search(r"@([a-zA-Z.]+)$", source).group(1)
+            expected_address = re.match(r"^([a-zA-Z0-9._-]+)@", source)[1]
+            expected_domain = re.search(r"@([a-zA-Z.]+)$", source)[1]
             assert results["address"][i] == expected_address
             assert results["domain"][i] == expected_domain
             assert results["is_email?"][i] == True
@@ -1796,7 +1802,7 @@ class TestViewExpression(object):
 
         assert results["a"] == ['abcdef' for _ in data]
         assert results["abc"] == ['def' for _ in data]
-        assert results["b"] == [d if d else None for d in data]
+        assert results["b"] == [d or None for d in data]
         assert results["c"] == ["d", None, None, None, "a"]
         assert results["d"] == [None for _ in data]
         assert results["e"] == [None for _ in data]
@@ -1806,7 +1812,15 @@ class TestViewExpression(object):
     # is a broken expression without the newline after var domain
     def test_view_regex_email_substr(self):
         endings = ["com", "net", "co.uk", "ie", "me", "io", "co"]
-        data = ["{}@{}.{}".format(randstr(30, ascii_letters + "0123456789" + "._-"), randstr(10), choices(endings, k=1)[0]) for _ in range(100)]
+        data = [
+            "{}@{}.{}".format(
+                randstr(30, f"{ascii_letters}0123456789._-"),
+                randstr(10),
+                choices(endings, k=1)[0],
+            )
+            for _ in range(100)
+        ]
+
         table = Table({"a": data})
         expressions = [
             "// address\nvar vec[2]; indexof(\"a\", '^([a-zA-Z0-9._-]+)@', vec) ? substring(\"a\", vec[0], vec[1] - vec[0] + 1) : null",
@@ -1831,9 +1845,9 @@ class TestViewExpression(object):
 
         for i in range(100):
             source = results["a"][i]
-            address = re.match(r"^([a-zA-Z0-9._-]+)@", source).group(1)
-            domain = re.search(r"@([a-zA-Z.]+)$", source).group(1)
-            ending = re.search(r"[.](.*)$", domain).group(1)
+            address = re.match(r"^([a-zA-Z0-9._-]+)@", source)[1]
+            domain = re.search(r"@([a-zA-Z.]+)$", source)[1]
+            ending = re.search(r"[.](.*)$", domain)[1]
             assert results["address"][i] == address
             assert results["ending"][i] == ending
 

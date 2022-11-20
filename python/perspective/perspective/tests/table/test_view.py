@@ -684,10 +684,22 @@ class TestView(object):
 
     def test_view_variance_multi_update_indexed(self):
         data = {
-            "a": [91.96, 258.576, 29.6, 243.16, 36.24, 25.248, 79.99, 206.1, 31.5, 55.6],
+            "a": [
+                91.96,
+                258.576,
+                29.6,
+                243.16,
+                36.24,
+                25.248,
+                79.99,
+                206.1,
+                31.5,
+                55.6,
+            ],
             "b": [1 if i % 2 == 0 else 0 for i in range(10)],
-            "c": [i for i in range(10)]
+            "c": list(range(10)),
         }
+
         table = Table(data, index="c")
         view = table.view(
             aggregates={"a": "var"},
@@ -731,10 +743,22 @@ class TestView(object):
 
     def test_view_variance_multi_update_indexed_delta(self):
         data = {
-            "a": [91.96, 258.576, 29.6, 243.16, 36.24, 25.248, 79.99, 206.1, 31.5, 55.6],
+            "a": [
+                91.96,
+                258.576,
+                29.6,
+                243.16,
+                36.24,
+                25.248,
+                79.99,
+                206.1,
+                31.5,
+                55.6,
+            ],
             "b": [1 if i % 2 == 0 else 0 for i in range(10)],
-            "c": [i for i in range(10)]
+            "c": list(range(10)),
         }
+
         table = Table(data, index="c")
         view = table.view(
             aggregates={"a": "var", "b": "last", "c": "last"},
@@ -786,10 +810,7 @@ class TestView(object):
         table.update(update_data)
 
     def test_view_variance_less_than_two(self):
-        data = {
-            "a": list(np.random.rand(10)),
-            "b": [i for i in range(10)]
-        }
+        data = {"a": list(np.random.rand(10)), "b": list(range(10))}
 
         table = Table(data)
         view = table.view(
@@ -971,10 +992,22 @@ class TestView(object):
 
     def test_view_standard_deviation_multi_update_indexed(self):
         data = {
-            "a": [91.96, 258.576, 29.6, 243.16, 36.24, 25.248, 79.99, 206.1, 31.5, 55.6],
+            "a": [
+                91.96,
+                258.576,
+                29.6,
+                243.16,
+                36.24,
+                25.248,
+                79.99,
+                206.1,
+                31.5,
+                55.6,
+            ],
             "b": [1 if i % 2 == 0 else 0 for i in range(10)],
-            "c": [i for i in range(10)]
+            "c": list(range(10)),
         }
+
         table = Table(data, index="c")
         view = table.view(
             aggregates={"a": "stddev"},
@@ -1018,10 +1051,22 @@ class TestView(object):
 
     def test_view_standard_deviation_multi_update_indexed_delta(self):
         data = {
-            "a": [91.96, 258.576, 29.6, 243.16, 36.24, 25.248, 79.99, 206.1, 31.5, 55.6],
+            "a": [
+                91.96,
+                258.576,
+                29.6,
+                243.16,
+                36.24,
+                25.248,
+                79.99,
+                206.1,
+                31.5,
+                55.6,
+            ],
             "b": [1 if i % 2 == 0 else 0 for i in range(10)],
-            "c": [i for i in range(10)]
+            "c": list(range(10)),
         }
+
         table = Table(data, index="c")
         view = table.view(
             aggregates={"a": "stddev", "b": "last", "c": "last"},
@@ -1073,10 +1118,7 @@ class TestView(object):
         table.update(update_data)
 
     def test_view_standard_deviation_less_than_two(self):
-        data = {
-            "a": list(np.random.rand(10)),
-            "b": [i for i in range(10)]
-        }
+        data = {"a": list(np.random.rand(10)), "b": list(range(10))}
 
         table = Table(data)
         view = table.view(
@@ -2082,7 +2124,7 @@ class TestView(object):
             tbl.view(columns=["x"])
         assert str(ex.value) == "Invalid column 'x' found in View columns.\n"
 
-        for i in range(100):
+        for _ in range(100):
             tbl.update(data)
             # force call to _process which should shake out invalid column ptrs
             tbl.size()
@@ -2108,7 +2150,7 @@ class TestView(object):
 
         assert str(ex.value) == "Invalid column 'x' found in View columns.\n"
 
-        for i in range(100):
+        for _ in range(100):
             tbl.update(data)
             # force call to _process which should shake out invalid column ptrs
             tbl.size()

@@ -160,7 +160,7 @@ class _PerspectiveManagerInternal(object):
                 # resolved.
                 message = self._make_message(msg["id"], msg["view_name"])
                 post_callback(self._message_to_json(msg["id"], message))
-            elif cmd == "table_method" or cmd == "view_method":
+            elif cmd in ["table_method", "view_method"]:
                 # Call the method on the table/view instance
                 self._process_method_call(msg, post_callback, client_id)
         except (PerspectiveError, PerspectiveCppError) as error:
@@ -202,26 +202,25 @@ class _PerspectiveManagerInternal(object):
                 elif msg["method"].startswith("to_"):
                     # parse options in `to_format` calls
                     for d in msg.get("args", []):
-                        arguments.update(d)
+                        arguments |= d
                 else:
                     # Otherwise, arguments are always passed as arrays of
                     # individual arguments.
                     arguments = msg.get("args", [])
 
                 if msg["method"] == "delete":
-                    if msg["cmd"] == "view_method":
-                        # views can be removed, but tables cannot - intercept
-                        # calls to `delete` on the view and return.
-                        self._views[msg["name"]].delete()
-                        self._views.pop(msg["name"], None)
-                        return
-                    else:
+                    if msg["cmd"] != "view_method":
                         # Return an error when `table.delete()` is called
                         # over the wire API.
                         raise PerspectiveError(
                             "table.delete() cannot be called on a remote table, as the remote has full ownership."
                         )
 
+                    # views can be removed, but tables cannot - intercept
+                    # calls to `delete` on the view and return.
+                    self._views[msg["name"]].delete()
+                    self._views.pop(msg["name"], None)
+                    return
                 # Dispatch the method using the expected argument form
                 if msg["method"].startswith("to_"):
                     # to_format takes dictionary of options
@@ -301,20 +300,13 @@ class _PerspectiveManagerInternal(object):
 
                 for callback in popped_callbacks:
                     getattr(table_or_view, method)(callback["callback"])
-            if callback is not None:
-                # call the underlying method on the Table or View, and apply
-                # the dictionary of kwargs that is passed through.
-                if method == "on_update":
-                    # If there are no arguments, make sure we call `on_update`
-                    # with mode set to "none".
-                    mode = {"mode": "none"}
-                    if len(args) > 0:
-                        mode = args[0]
-                    getattr(table_or_view, method)(callback, **mode)
-                else:
-                    getattr(table_or_view, method)(callback)
+            if callback is None:
+                logging.info(f"callback not found for remote call {msg}")
+            elif method == "on_update":
+                mode = args[0] if len(args) > 0 else {"mode": "none"}
+                getattr(table_or_view, method)(callback, **mode)
             else:
-                logging.info("callback not found for remote call {}".format(msg))
+                getattr(table_or_view, method)(callback)
         except Exception as error:
             error_string = str(error)
             message = self._make_error_message(msg["id"], error_string)
@@ -392,11 +384,7 @@ class _PerspectiveManagerInternal(object):
             self._views.pop(name)
 
         if count > 0:
-            logging.debug(
-                "client {} disconnected - GC {} views in memory".format(
-                    client_id, count
-                )
-            )
+            logging.debug(f"client {client_id} disconnected - GC {count} views in memory")
 
     def _make_message(self, id, result):
         """Return a serializable message for a successful result."""
@@ -430,8 +418,9 @@ class _PerspectiveManagerInternal(object):
                 )
 
             error_message = self._make_error_message(
-                id, "JSON serialization error: {}".format(error_string)
+                id, f"JSON serialization error: {error_string}"
             )
+
 
             logging.warning(error_message["error"])
             return json.dumps(error_message)
