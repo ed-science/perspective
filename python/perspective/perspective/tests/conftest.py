@@ -212,9 +212,7 @@ def util():
 def superstore(count=100):
     data = []
     for id in range(count):
-        dat = {}
-        dat["Row ID"] = id
-        dat["Order ID"] = "{}-{}".format(fake.ein(), fake.zipcode())
+        dat = {"Row ID": id, "Order ID": f"{fake.ein()}-{fake.zipcode()}"}
         dat["Order Date"] = fake.date_this_year()
         dat["Ship Date"] = fake.date_between_dates(dat["Order Date"]).strftime(
             "%Y-%m-%d"

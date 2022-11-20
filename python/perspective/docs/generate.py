@@ -38,9 +38,9 @@ def main():
     cwd = os.path.dirname(os.path.realpath(__file__))
     build_dir = os.path.join(cwd, "build")
     if (os.path.exists(build_dir)):
-        print("Cleaning docs build folder '{}'".format(build_dir))
+        print(f"Cleaning docs build folder '{build_dir}'")
         shutil.rmtree(build_dir)
-    os.system("sphinx-build -b markdown {} {}".format(cwd, build_dir))
+    os.system(f"sphinx-build -b markdown {cwd} {build_dir}")
 
     output = HEADER
     for filename in ["perspective.table.md", "perspective.core.md"]:

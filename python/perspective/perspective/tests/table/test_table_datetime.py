@@ -1054,10 +1054,7 @@ if os.name != 'nt':
         def test_table_group_by_datetime_row_path_local_time_EST(self):
             """Make sure that string datetimes generated in Python are in
             local time and not UTC."""
-            data = {
-                "a": LOCAL_DATETIMES,
-                "b": [i for i in range(len(LOCAL_DATETIMES))]
-            }
+            data = {"a": LOCAL_DATETIMES, "b": list(range(len(LOCAL_DATETIMES)))}
 
             table = Table(data)
 
@@ -1083,10 +1080,7 @@ if os.name != 'nt':
             os.environ["TZ"] = "UTC"
             time.tzset()
 
-            data = {
-                "a": LOCAL_DATETIMES,
-                "b": [i for i in range(len(LOCAL_DATETIMES))]
-            }
+            data = {"a": LOCAL_DATETIMES, "b": list(range(len(LOCAL_DATETIMES)))}
 
             table = Table(data)
 
@@ -1108,10 +1102,7 @@ if os.name != 'nt':
             os.environ["TZ"] = "US/Central"
             time.tzset()
 
-            data = {
-                "a": LOCAL_DATETIMES,
-                "b": [i for i in range(len(LOCAL_DATETIMES))]
-            }
+            data = {"a": LOCAL_DATETIMES, "b": list(range(len(LOCAL_DATETIMES)))}
 
             table = Table(data)
 
@@ -1133,10 +1124,7 @@ if os.name != 'nt':
             os.environ["TZ"] = "US/Pacific"
             time.tzset()
 
-            data = {
-                "a": LOCAL_DATETIMES,
-                "b": [i for i in range(len(LOCAL_DATETIMES))]
-            }
+            data = {"a": LOCAL_DATETIMES, "b": list(range(len(LOCAL_DATETIMES)))}
 
             table = Table(data)
 
@@ -1177,7 +1165,7 @@ if os.name != 'nt':
 
             for item in result["now()"]:
                 in_range = now - timedelta(seconds=2) < item < now + timedelta(seconds=2)
-                assert in_range is True
+                assert in_range
 
         def test_table_now_in_CST(self, util):
             os.environ["TZ"] = "US/Central"
@@ -1194,7 +1182,7 @@ if os.name != 'nt':
 
             for item in result["now()"]:
                 in_range = now - timedelta(seconds=2) < item < now + timedelta(seconds=2)
-                assert in_range is True
+                assert in_range
         
         def test_table_now_in_PST(self, util):
             os.environ["TZ"] = "US/Pacific"
@@ -1211,7 +1199,7 @@ if os.name != 'nt':
 
             for item in result["now()"]:
                 in_range = now - timedelta(seconds=2) < item < now + timedelta(seconds=2)
-                assert in_range is True
+                assert in_range
 
         def test_table_hour_of_day_in_EST(self):
             data = {
@@ -1524,8 +1512,9 @@ class TestTableDateTimePivots(object):
     def test_table_group_by_date_correct(self):
         data = {
             "a": [date(2020, i, 15) for i in range(1, 13)],
-            "b": [i for i in range(1, 13)]
+            "b": list(range(1, 13)),
         }
+
         table = Table(data)
         view = table.view(group_by=["a"])
         assert view.to_columns() == {
@@ -1551,8 +1540,9 @@ class TestTableDateTimePivots(object):
     def test_table_group_by_pandas_date_correct(self):
         data = {
             "a": [date(2020, i, 15) for i in range(1, 13)],
-            "b": [i for i in range(1, 13)]
+            "b": list(range(1, 13)),
         }
+
         table = Table(pd.DataFrame(data))
         view = table.view(group_by=["a"])
         assert view.to_columns() == {
@@ -1579,8 +1569,9 @@ class TestTableDateTimePivots(object):
     def test_table_split_by_date_correct(self):
         data = {
             "a": [date(2020, i, 15) for i in range(1, 13)],
-            "b": [i for i in range(1, 13)]
+            "b": list(range(1, 13)),
         }
+
         table = Table(data)
         view = table.view(split_by=["a"])
         assert view.to_columns() == {
@@ -1877,8 +1868,9 @@ class TestTableDateTimePivots(object):
     def test_table_split_by_pandas_date_correct(self):
         data = {
             "a": [date(2020, i, 15) for i in range(1, 13)],
-            "b": [i for i in range(1, 13)]
+            "b": list(range(1, 13)),
         }
+
         table = Table(pd.DataFrame(data))
         view = table.view(columns=["a", "b"], split_by=["a"])
         assert view.to_columns() == {

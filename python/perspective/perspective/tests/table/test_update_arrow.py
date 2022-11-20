@@ -210,7 +210,7 @@ class TestUpdateArrow(object):
             assert tbl.size() == 8
             assert tbl.view().to_dict() == {
                 "a": [1, 2, 3, 4] * 2,
-                "x": [None for i in range(8)]
+                "x": [None for _ in range(8)],
             }
 
     def test_update_arrow_partial_updates_less_columns_file(self):
@@ -228,7 +228,7 @@ class TestUpdateArrow(object):
             assert tbl.size() == 4
             assert tbl.view().to_dict() == {
                 "a": [1, 2, 3, 4],
-                "x": [None for i in range(4)]
+                "x": [None for _ in range(4)],
             }
 
     def test_update_arrow_updates_dict_less_columns_file(self):
@@ -245,8 +245,17 @@ class TestUpdateArrow(object):
             tbl.update(partial.read())
             assert tbl.size() == 8
             assert tbl.view().to_dict() == {
-                "a": ["abc", "def", "def", None, "abc", None, "update1", "update2"],
-                "x": [None for i in range(8)]
+                "a": [
+                    "abc",
+                    "def",
+                    "def",
+                    None,
+                    "abc",
+                    None,
+                    "update1",
+                    "update2",
+                ],
+                "x": [None for _ in range(8)],
             }
 
     @mark.skip
@@ -265,13 +274,13 @@ class TestUpdateArrow(object):
             assert tbl.size() == 4
             assert tbl.view().to_dict() == {
                 "a": ["abc", "def", "update1", "update2"],
-                "x": [None for i in range(4)]
+                "x": [None for _ in range(4)],
             }
 
     # update int schema with int
 
     def test_update_arrow_update_int_schema_with_uint8(self, util):
-        array = [random.randint(0, 127) for i in range(100)]
+        array = [random.randint(0, 127) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint8)
         })
@@ -288,7 +297,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_uint16(self, util):
-        array = [random.randint(0, 32767) for i in range(100)]
+        array = [random.randint(0, 32767) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint16)
         })
@@ -305,7 +314,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_uint32(self, util):
-        array = [random.randint(0, 2000000) for i in range(100)]
+        array = [random.randint(0, 2000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint32)
         })
@@ -322,7 +331,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_uint64(self, util):
-        array = [random.randint(0, 20000000) for i in range(100)]
+        array = [random.randint(0, 20000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint64)
         })
@@ -339,7 +348,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_int8(self, util):
-        array = [random.randint(-127, 127) for i in range(100)]
+        array = [random.randint(-127, 127) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int8)
         })
@@ -356,7 +365,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_int16(self, util):
-        array = [random.randint(-32767, 32767) for i in range(100)]
+        array = [random.randint(-32767, 32767) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int16)
         })
@@ -373,7 +382,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_int32(self, util):
-        array = [random.randint(-2000000, 2000000) for i in range(100)]
+        array = [random.randint(-2000000, 2000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int32)
         })
@@ -390,7 +399,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_int_schema_with_int64(self, util):
-        array = [random.randint(-20000000, 20000000) for i in range(100)]
+        array = [random.randint(-20000000, 20000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int64)
         })
@@ -409,7 +418,7 @@ class TestUpdateArrow(object):
     # updating float schema with int
 
     def test_update_arrow_update_float_schema_with_uint8(self, util):
-        array = [random.randint(0, 127) for i in range(100)]
+        array = [random.randint(0, 127) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint8)
         })
@@ -426,7 +435,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_uint16(self, util):
-        array = [random.randint(0, 32767) for i in range(100)]
+        array = [random.randint(0, 32767) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint16)
         })
@@ -443,7 +452,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_uint32(self, util):
-        array = [random.randint(0, 2000000) for i in range(100)]
+        array = [random.randint(0, 2000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint32)
         })
@@ -460,7 +469,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_uint64(self, util):
-        array = [random.randint(0, 20000000) for i in range(100)]
+        array = [random.randint(0, 20000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.uint64)
         })
@@ -477,7 +486,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_int8(self, util):
-        array = [random.randint(-127, 127) for i in range(100)]
+        array = [random.randint(-127, 127) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int8)
         })
@@ -494,7 +503,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_int16(self, util):
-        array = [random.randint(-32767, 32767) for i in range(100)]
+        array = [random.randint(-32767, 32767) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int16)
         })
@@ -511,7 +520,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_int32(self, util):
-        array = [random.randint(-2000000, 2000000) for i in range(100)]
+        array = [random.randint(-2000000, 2000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int32)
         })
@@ -528,7 +537,7 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_int64(self, util):
-        array = [random.randint(-20000000, 20000000) for i in range(100)]
+        array = [random.randint(-20000000, 20000000) for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.int64)
         })
@@ -546,7 +555,7 @@ class TestUpdateArrow(object):
 
     # updating int schema with float
     def test_update_arrow_update_int_schema_with_float32(self, util):
-        array = [random.randint(-2000000, 2000000) * 0.5 for i in range(100)]
+        array = [random.randint(-2000000, 2000000) * 0.5 for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.float32)
         })
@@ -563,7 +572,11 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == [int(x) for x in array]
 
     def test_update_arrow_update_int_schema_with_float64(self, util):
-        array = [random.randint(-20000000, 20000000) * random.random() for i in range(100)]
+        array = [
+            random.randint(-20000000, 20000000) * random.random()
+            for _ in range(100)
+        ]
+
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.float64)
         })
@@ -582,7 +595,7 @@ class TestUpdateArrow(object):
     # updating float schema with float
 
     def test_update_arrow_update_float_schema_with_float32(self, util):
-        array = [random.randint(-2000000, 2000000) * 0.5 for i in range(100)]
+        array = [random.randint(-2000000, 2000000) * 0.5 for _ in range(100)]
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.float32)
         })
@@ -599,7 +612,11 @@ class TestUpdateArrow(object):
         assert tbl.view().to_dict()["a"] == array
 
     def test_update_arrow_update_float_schema_with_float64(self, util):
-        array = [random.randint(-20000000, 20000000) * random.random() for i in range(100)]
+        array = [
+            random.randint(-20000000, 20000000) * random.random()
+            for _ in range(100)
+        ]
+
         data = pd.DataFrame({
             "a": np.array(array, dtype=np.float64)
         })
@@ -692,7 +709,7 @@ class TestUpdateArrow(object):
     # streams
 
     def test_update_arrow_updates_int_stream(self, util):
-        data = [list(range(10)) for i in range(4)]
+        data = [list(range(10)) for _ in range(4)]
         arrow_data = util.make_arrow(names, data)
         tbl = Table({
             "a": int,
@@ -710,10 +727,7 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_updates_float_stream(self, util):
-        data = [
-            [i for i in range(10)],
-            [i * 1.5 for i in range(10)]
-        ]
+        data = [list(range(10)), [i * 1.5 for i in range(10)]]
         arrow_data = util.make_arrow(["a", "b"], data)
         tbl = Table({
             "a": int,
@@ -741,9 +755,7 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_updates_bool_stream(self, util):
-        data = [
-            [True if i % 2 == 0 else False for i in range(10)]
-        ]
+        data = [[i % 2 == 0 for i in range(10)]]
         arrow_data = util.make_arrow(["a"], data)
         tbl = Table({
             "a": bool
@@ -953,7 +965,7 @@ class TestUpdateArrow(object):
     # append
 
     def test_update_arrow_updates_append_int_stream(self, util):
-        data = [list(range(10)) for i in range(4)]
+        data = [list(range(10)) for _ in range(4)]
         arrow_data = util.make_arrow(names, data)
         tbl = Table(arrow_data)
         tbl.update(arrow_data)
@@ -966,10 +978,7 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_updates_append_float_stream(self, util):
-        data = [
-            [i for i in range(10)],
-            [i * 1.5 for i in range(10)]
-        ]
+        data = [list(range(10)), [i * 1.5 for i in range(10)]]
         arrow_data = util.make_arrow(["a", "b"], data)
         tbl = Table(arrow_data)
         tbl.update(arrow_data)
@@ -992,9 +1001,7 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_updates_append_bool_stream(self, util):
-        data = [
-            [True if i % 2 == 0 else False for i in range(10)]
-        ]
+        data = [[i % 2 == 0 for i in range(10)]]
         arrow_data = util.make_arrow(["a"], data)
         tbl = Table(arrow_data)
         tbl.update(arrow_data)
@@ -1138,7 +1145,7 @@ class TestUpdateArrow(object):
 
     def test_update_arrow_column_order_str(self, util):
         # use str so it doesn't get promoted
-        data = [["a", "b", "c"] for i in range(10)]
+        data = [["a", "b", "c"] for _ in range(10)]
         names = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
         names_scrambled = names[::-1]
         arrow = util.make_arrow(names_scrambled, data)
@@ -1150,7 +1157,7 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_column_order_int(self, util):
-        data = [[1, 2, 3] for i in range(10)]
+        data = [[1, 2, 3] for _ in range(10)]
         names = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
         names_scrambled = names[::-1]
         arrow = util.make_arrow(names_scrambled, data)
@@ -1162,13 +1169,13 @@ class TestUpdateArrow(object):
         }
 
     def test_update_arrow_thread_safe_int_index(self, util):
-        data = [["a", "b", "c"] for i in range(10)]
+        data = [["a", "b", "c"] for _ in range(10)]
         data += [[1, 2, 3]]
         names = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "uid"]
         arrow = util.make_arrow(names, data)
         tbl = Table(arrow, index="uid")
 
-        for i in range(100):
+        for _ in range(100):
             idx = (1, 2, 3)[random.randint(0, 2)]
             update_data = [[str(uuid.uuid4()) + str(random.randint(100, 1000000000))], [idx]]
             update_names = [names[random.randint(0, 9)], "uid"]
@@ -1178,13 +1185,13 @@ class TestUpdateArrow(object):
         assert tbl.size() == 3
 
     def test_update_arrow_thread_safe_datetime_index(self, util):
-        data = [["a", "b", "c"] for i in range(10)]
+        data = [["a", "b", "c"] for _ in range(10)]
         data += [[datetime(2020, 1, 15, 12, 17), datetime(2020, 1, 15, 12, 18), datetime(2020, 1, 15, 12, 19)]]
         names = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "uid"]
         arrow = util.make_arrow(names, data)
         tbl = Table(arrow, index="uid")
 
-        for i in range(100):
+        for _ in range(100):
             idx = (datetime(2020, 1, 15, 12, 17), datetime(2020, 1, 15, 12, 18), datetime(2020, 1, 15, 12, 19))[random.randint(0, 2)]
             update_data = [[str(uuid.uuid4()) + str(random.randint(100, 1000000000))], [idx]]
             update_names = [names[random.randint(0, 9)], "uid"]
@@ -1194,12 +1201,12 @@ class TestUpdateArrow(object):
         assert tbl.size() == 3
 
     def test_update_arrow_thread_safe_str_index(self, util):
-        data = [["a", "b", "c"] for i in range(11)]
+        data = [["a", "b", "c"] for _ in range(11)]
         names = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "uid"]
         arrow = util.make_arrow(names, data)
         tbl = Table(arrow, index="uid")
 
-        for i in range(100):
+        for _ in range(100):
             idx = ("a", "b", "c")[random.randint(0, 2)]
             update_data = [[str(uuid.uuid4()) + str(random.randint(100, 1000000000))], [idx]]
             update_names = [names[random.randint(0, 9)], "uid"]

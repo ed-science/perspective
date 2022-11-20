@@ -53,7 +53,7 @@ def _type_to_format(data_or_schema):
     elif isinstance(data_or_schema, dict):
         # schema or columns
         for v in data_or_schema.values():
-            if isinstance(v, type) or isinstance(v, str):
+            if isinstance(v, (type, str)):
                 # schema maps name -> type
                 return False, 2, list(data_or_schema.keys()), data_or_schema
             elif isinstance(v, list):
@@ -83,20 +83,15 @@ def _type_to_format(data_or_schema):
         flattened = _flatten_structure(data_or_schema)
         return True, 1, list(flattened.keys()), flattened
     else:
-        if not (
-            isinstance(data_or_schema, pandas.DataFrame)
-            or isinstance(data_or_schema, pandas.Series)
-        ):
+        if not isinstance(data_or_schema, (pandas.DataFrame, pandas.Series)):
             # if pandas not installed or is not a dataframe or series
             raise NotImplementedError(
-                "Invalid data format `{}` - Data must be dataframe, dict, list, numpy.recarray, or a numpy structured array.".format(
-                    type(data_or_schema)
-                )
+                f"Invalid data format `{type(data_or_schema)}` - Data must be dataframe, dict, list, numpy.recarray, or a numpy structured array."
             )
-        else:
-            # flatten column/index multiindex
-            df, _ = deconstruct_pandas(data_or_schema)
-            return True, 1, df.columns.tolist(), {c: df[c].values for c in df.columns}
+
+        # flatten column/index multiindex
+        df, _ = deconstruct_pandas(data_or_schema)
+        return True, 1, df.columns.tolist(), {c: df[c].values for c in df.columns}
 
 
 class _PerspectiveAccessor(object):
@@ -241,17 +236,12 @@ class _PerspectiveAccessor(object):
             val = val[0]
 
         elif dtype == t_dtype.DTYPE_STR:
-            if isinstance(val, (bytes, bytearray)):
-                return val.decode("utf-8")
-            else:
-                return str(val)
+            return val.decode("utf-8") if isinstance(val, (bytes, bytearray)) else str(val)
         elif dtype == t_dtype.DTYPE_DATE:
-            # return datetime.date
-            if isinstance(val, str):
-                parsed = self._date_validator.parse(val)
-                return self._date_validator.to_date_components(parsed)
-            else:
+            if not isinstance(val, str):
                 return self._date_validator.to_date_components(val)
+            parsed = self._date_validator.parse(val)
+            return self._date_validator.to_date_components(parsed)
         elif dtype == t_dtype.DTYPE_TIME:
             # return unix timestamps for time
             if isinstance(val, str):
@@ -263,19 +253,16 @@ class _PerspectiveAccessor(object):
             # True values are y, yes, t, true, on and 1; false values are n, no,
             # f, false, off and 0.
             return bool(strtobool(str(val)))
-        elif dtype == t_dtype.DTYPE_INT32 or dtype == t_dtype.DTYPE_INT64:
+        elif dtype in [t_dtype.DTYPE_INT32, t_dtype.DTYPE_INT64]:
             if not isinstance(val, bool) and isinstance(val, (float, numpy.floating)):
                 # update int columns with either ints or floats
                 return int(val)
-        elif dtype == t_dtype.DTYPE_FLOAT32 or dtype == t_dtype.DTYPE_FLOAT64:
+        elif dtype in [t_dtype.DTYPE_FLOAT32, t_dtype.DTYPE_FLOAT64]:
             if not isinstance(val, bool) and isinstance(
                 val, _PerspectiveAccessor.INTEGER_TYPES
             ):
                 # update float columns with either ints or floats
                 return float(val)
-        elif dtype == t_dtype.DTYPE_OBJECT:
-            # will extract the id from the object
-            pass
         return val
 
     def try_cast_numpy_arrays(self):

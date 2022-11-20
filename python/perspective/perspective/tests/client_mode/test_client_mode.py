@@ -39,10 +39,7 @@ def mock_post(self, msg, msg_id=None, assert_msg=None):
 
 
 def unload():
-    to_pop = []
-    for mod in sys.modules:
-        if mod.startswith("perspective"):
-            to_pop.append(mod)
+    to_pop = [mod for mod in sys.modules if mod.startswith("perspective")]
     for mod in to_pop:
         sys.modules.pop(mod)
 
@@ -87,7 +84,7 @@ class TestClient(object):
         import perspective
 
         assert perspective.is_libpsp() is False
-        data = {"a": [i for i in range(50)]}
+        data = {"a": list(range(50))}
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == data
@@ -99,7 +96,7 @@ class TestClient(object):
         data = {"a": np.arange(0, 50)}
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
-        assert widget._data == {"a": [i for i in range(50)]}
+        assert widget._data == {"a": list(range(50))}
 
     def test_widget_client_df(self, rename_libraries):
         import perspective
@@ -115,8 +112,8 @@ class TestClient(object):
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == {
-            "index": [i for i in range(10)],
-            "a": [i for i in range(10)],
+            "index": list(range(10)),
+            "a": list(range(10)),
             "b": [True for i in range(10)],
             "c": [str(i) for i in range(10)],
         }
@@ -165,7 +162,7 @@ class TestClient(object):
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == {
-            "index": [i for i in range(12)],
+            "index": list(range(12)),
             "a": ["2020-{:02d}-01 00:00:00".format(i) for i in range(1, 13)],
         }
 
@@ -179,7 +176,7 @@ class TestClient(object):
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == {
-            "index": [i for i in range(12)],
+            "index": list(range(12)),
             "a": ["2020-{:02d}-01".format(i) for i in range(1, 13)],
         }
 
@@ -236,7 +233,7 @@ class TestClient(object):
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == {
-            "index": [i for i in range(12)],
+            "index": list(range(12)),
             "a": ["2020-{:02d}-01 12:30:45".format(i) for i in range(1, 13)],
         }
 
@@ -251,7 +248,7 @@ class TestClient(object):
         widget = perspective.PerspectiveWidget(data)
         assert hasattr(widget, "table") is False
         assert widget._data == {
-            "index": [i for i in range(12)],
+            "index": list(range(12)),
             "a": ["2020-{:02d}-01 12:30:45".format(i) for i in range(1, 13)],
         }
 
@@ -369,7 +366,7 @@ class TestClient(object):
 
         assert perspective.is_libpsp() is False
         data = {"a": np.arange(0, 50)}
-        comparison_data = {"a": [i for i in range(50)]}
+        comparison_data = {"a": list(range(50))}
         widget = perspective.PerspectiveWidget(data)
         mocked_post = partial(
             mock_post, assert_msg={"cmd": "update", "data": comparison_data}

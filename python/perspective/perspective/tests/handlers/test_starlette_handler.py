@@ -28,11 +28,12 @@ from perspective.client.starlette_test import websocket
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -244,12 +245,12 @@ class TestPerspectiveStarletteHandler(object):
 
         assert size == 10
 
-        table.remove([i for i in range(5)])
+        table.remove(list(range(5)))
 
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {"a": [i for i in range(5, 10)]}
+        assert output == {"a": list(range(5, 10))}
 
         await client.terminate()
 
@@ -264,9 +265,7 @@ class TestPerspectiveStarletteHandler(object):
         view = await table.view(columns=["a"])
         output = await view.to_dict()
 
-        assert output == {
-            "a": [i for i in range(10)],
-        }
+        assert output == {"a": list(range(10))}
 
         await client.terminate()
 

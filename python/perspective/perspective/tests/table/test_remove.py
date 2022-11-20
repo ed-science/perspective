@@ -25,7 +25,7 @@ class TestRemove(object):
 
     def test_remove_multiple_single(self):
         tbl = Table({"a": int, "b": str}, index="a")
-        for i in range(0, 10):
+        for i in range(10):
             tbl.update([{"a": i, "b": str(i)}])
         for i in range(1, 10):
             tbl.remove([i])

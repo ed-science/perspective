@@ -72,7 +72,7 @@ def deconstruct_numpy(array, mask=None):
     if mask is None:
         mask = make_null_mask(array)
 
-    if array.dtype == bool or array.dtype == "?":
+    if array.dtype in [bool, "?"]:
         # bool => byte
         array = array.astype("b", copy=False)
     elif np.issubdtype(array.dtype, np.datetime64):

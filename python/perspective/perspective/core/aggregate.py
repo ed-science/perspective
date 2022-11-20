@@ -47,4 +47,4 @@ class Aggregate(Enum):
 
     @staticmethod
     def options():
-        return list(c.value for c in Aggregate)
+        return [c.value for c in Aggregate]

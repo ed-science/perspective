@@ -293,7 +293,7 @@ class PerspectiveBenchmark(Suite):
     def benchmark_to_format_zero(self):
         """Benchmark each `to_format` method."""
         for name in ("numpy", "dict", "records", "df", "arrow"):
-            test_meta = make_meta("to_format", "to_{}".format(name))
+            test_meta = make_meta("to_format", f"to_{name}")
             func = Benchmark(
                 lambda: getattr(self._view, "to_{0}".format(name))(), meta=test_meta
             )
@@ -355,6 +355,6 @@ if __name__ == "__main__":
     suite = PerspectiveBenchmark()
     runner = Runner(suite)
 
-    print("Benchmarking perspective-python=={}".format(VERSION))
+    print(f"Benchmarking perspective-python=={VERSION}")
     runner.run(VERSION)
     runner.write_results()

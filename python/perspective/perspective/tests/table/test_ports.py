@@ -20,19 +20,13 @@ class TestPorts(object):
 
     def test_make_port_sequential(self):
         table = Table(data)
-        port_ids = []
-
-        for i in range(10):
-            port_ids.append(table.make_port())
+        port_ids = [table.make_port() for _ in range(10)]
 
         assert port_ids == list(range(1, 11))
 
     def test_make_port_sequential_and_update(self):
         table = Table(data)
-        port_ids = []
-
-        for i in range(10):
-            port_ids.append(table.make_port())
+        port_ids = [table.make_port() for _ in range(10)]
 
         assert port_ids == list(range(1, 11))
 
@@ -47,17 +41,14 @@ class TestPorts(object):
         result = view.to_dict()
 
         assert result == {
-            "a": [1, 2, 3, 4] + [i for i in range(1, 11)],
-            "b": ["a", "b", "c", "d"] + ["a" for i in range(10)],
-            "c": [True, False, True, False] + [True for i in range(10)]
+            "a": [1, 2, 3, 4] + list(range(1, 11)),
+            "b": ["a", "b", "c", "d"] + ["a" for _ in range(10)],
+            "c": [True, False, True, False] + [True for _ in range(10)],
         }
 
     def test_arbitary_port_updates(self):
         table = Table(data)
-        port_ids = []
-
-        for i in range(10):
-            port_ids.append(table.make_port())
+        port_ids = [table.make_port() for _ in range(10)]
 
         assert port_ids == list(range(1, 11))
 

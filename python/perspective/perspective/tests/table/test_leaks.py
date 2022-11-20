@@ -18,11 +18,11 @@ class TestDelete(object):
     def test_table_delete(self):
         process = psutil.Process(os.getpid())
         mem = process.memory_info().rss
-        for x in range(10000):
+        for _ in range(10000):
             data = [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
             tbl = Table(data)
             tbl.delete()
-        
+
         mem2 = process.memory_info().rss
 
         # assert 1 < (max2 / max) < 1.01
@@ -34,10 +34,10 @@ class TestDelete(object):
 
         process = psutil.Process(os.getpid())
         mem = process.memory_info().rss
-        for x in range(10000):
+        for _ in range(10000):
             view = tbl.view()
             view.delete()
-        
+
         tbl.delete()
         mem2 = process.memory_info().rss
         assert (mem2 - mem) < 2000000

@@ -60,6 +60,6 @@ if __name__ == "__main__":
     benchmarks = [bench_to_arrow, bench_stddev]
 
     for benchmark in benchmarks:
-        logging.info("Running {}".format(benchmark.__name__))
+        logging.info(f"Running {benchmark.__name__}")
         runner = PerspectiveTornadoBenchmark(benchmark)
         runner.run()

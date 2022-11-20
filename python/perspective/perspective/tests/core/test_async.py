@@ -298,7 +298,7 @@ class TestAsync(object):
             port_ids.append(port_id)
             port_data.append({"a": port_id, "b": port_id * 1.5, "c": str(port_id)})
 
-        assert port_ids == list(range(0, 11))
+        assert port_ids == list(range(11))
         manager = PerspectiveManager()
         manager.host(tbl)
         manager.set_loop_callback(TestAsync.loop.add_callback)

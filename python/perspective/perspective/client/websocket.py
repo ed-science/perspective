@@ -132,9 +132,6 @@ class PerspectiveWebsocketClient(PerspectiveClient):
                     self._pending_port_id = msg["data"].get("port_id")
             else:
                 self._handle({"data": msg})
-        else:
-            # websocket client sometimes calls None on disconnect ..
-            pass
 
     async def send(self, msg):
         """Send a message to the Websocket endpoint."""

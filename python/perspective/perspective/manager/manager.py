@@ -17,7 +17,7 @@ from .session import PerspectiveSession
 
 
 def gen_name(size=10, chars=string.ascii_uppercase + string.digits):
-    return "".join(random.choice(chars) for x in range(size))
+    return "".join(random.choice(chars) for _ in range(size))
 
 
 class PerspectiveManager(_PerspectiveManagerInternal):

@@ -52,8 +52,7 @@ class PerspectiveClient(object):
         if not msg.get("data"):
             return
 
-        handler = self._handlers.get(msg["data"].get("id"))
-        if handler:
+        if handler := self._handlers.get(msg["data"].get("id")):
             future = handler.get("future", None)
             keep_alive = handler.get("keep_alive", False)
 
@@ -108,7 +107,7 @@ class PerspectiveClient(object):
             # a custom resolve handler like we can do in JS.
             cmd = msg.get("cmd", None)
 
-            if cmd == "view" or cmd == "table":
+            if cmd in ["view", "table"]:
                 handler["cmd"] = cmd
 
             self._handlers[self._msg_id] = handler

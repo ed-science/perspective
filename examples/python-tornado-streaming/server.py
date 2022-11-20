@@ -9,22 +9,20 @@ from perspective import Table, PerspectiveManager, PerspectiveTornadoHandler
 
 
 def data_source():
-    rows = []
     modifier = random.random() * random.randint(1, 50)
-    for i in range(5):
-        rows.append(
-            {
-                "name": SECURITIES[random.randint(0, len(SECURITIES) - 1)],
-                "client": CLIENTS[random.randint(0, len(CLIENTS) - 1)],
-                "open": (random.random() * 75 + random.randint(0, 9)) * modifier,
-                "high": (random.random() * 105 + random.randint(1, 3)) * modifier,
-                "low": (random.random() * 85 + random.randint(1, 3)) * modifier,
-                "close": (random.random() * 90 + random.randint(1, 3)) * modifier,
-                "lastUpdate": datetime.now(),
-                "date": date.today(),
-            }
-        )
-    return rows
+    return [
+        {
+            "name": SECURITIES[random.randint(0, len(SECURITIES) - 1)],
+            "client": CLIENTS[random.randint(0, len(CLIENTS) - 1)],
+            "open": (random.random() * 75 + random.randint(0, 9)) * modifier,
+            "high": (random.random() * 105 + random.randint(1, 3)) * modifier,
+            "low": (random.random() * 85 + random.randint(1, 3)) * modifier,
+            "close": (random.random() * 90 + random.randint(1, 3)) * modifier,
+            "lastUpdate": datetime.now(),
+            "date": date.today(),
+        }
+        for _ in range(5)
+    ]
 
 
 SECURITIES = [

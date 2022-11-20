@@ -23,11 +23,12 @@ from perspective import (
 
 
 data = {
-    "a": [i for i in range(10)],
+    "a": list(range(10)),
     "b": [i * 1.5 for i in range(10)],
     "c": [str(i) for i in range(10)],
     "d": [datetime(2020, 3, i, i, 30, 45) for i in range(1, 11)],
 }
+
 
 MANAGER = PerspectiveManager()
 
@@ -64,7 +65,7 @@ class TestPerspectiveAIOHttpHandlerAsyncMode(object):
     async def websocket_client(self, app, aiohttp_client):
         client = await aiohttp_client(app)
         return await websocket(
-            "http://{}:{}/websocket".format(client.host, client.port), client.session
+            f"http://{client.host}:{client.port}/websocket", client.session
         )
 
     @pytest.mark.asyncio
@@ -76,10 +77,8 @@ class TestPerspectiveAIOHttpHandlerAsyncMode(object):
         table = client.open_table(table_name)
         view = await table.view()
         reqs = []
-        for x in range(10):
-            reqs.append(table.update(data))
-            reqs.append(view.to_arrow())
-
+        for _ in range(10):
+            reqs.extend((table.update(data), view.to_arrow()))
         await asyncio.gather(*reqs)
         records = await view.to_records()
         assert len(records) == 110

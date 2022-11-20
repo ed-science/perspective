@@ -119,9 +119,7 @@ class PSPBuild(build_ext):
             )
 
         if platform.system() == "Windows":
-            cmake_version = LooseVersion(
-                re.search(r"version\s*([\d.]+)", out.decode()).group(1)
-            )
+            cmake_version = LooseVersion(re.search(r"version\s*([\d.]+)", out.decode())[1])
             if cmake_version < "3.1.0":
                 raise RuntimeError("CMake >= 3.1.0 is required on Windows")
 
@@ -132,39 +130,42 @@ class PSPBuild(build_ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
         cfg = "Debug" if self.debug else "Release"
 
-        PYTHON_VERSION = "{}.{}".format(sys.version_info.major, sys.version_info.minor)
+        PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
 
         cmake_args = [
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY="
-            + os.path.abspath(os.path.join(extdir, "perspective", "table")).replace(
-                "\\", "/"
-            ),
-            "-DCMAKE_BUILD_TYPE=" + cfg,
+            + os.path.abspath(
+                os.path.join(extdir, "perspective", "table")
+            ).replace("\\", "/"),
+            f"-DCMAKE_BUILD_TYPE={cfg}",
             "-DPSP_CPP_BUILD=1",
             "-DPSP_WASM_BUILD=0",
             "-DPSP_PYTHON_BUILD=1",
-            "-DPSP_PYTHON_VERSION={}".format(PYTHON_VERSION),
-            "-DPython_ADDITIONAL_VERSIONS={}".format(PYTHON_VERSION),
-            "-DPython_FIND_VERSION={}".format(PYTHON_VERSION),
-            "-DPython_EXECUTABLE={}".format(sys.executable).replace("\\", "/"),
-            "-DPYTHON_LIBRARY={}".format(sysconfig.get_config_var("LIBDIR")).replace(
+            f"-DPSP_PYTHON_VERSION={PYTHON_VERSION}",
+            f"-DPython_ADDITIONAL_VERSIONS={PYTHON_VERSION}",
+            f"-DPython_FIND_VERSION={PYTHON_VERSION}",
+            f"-DPython_EXECUTABLE={sys.executable}".replace("\\", "/"),
+            f'-DPYTHON_LIBRARY={sysconfig.get_config_var("LIBDIR")}'.replace(
                 "\\", "/"
             ),
-            "-DPYTHON_INCLUDE_DIR={}".format(
-                sysconfig.get_config_var("INCLUDEPY")
-            ).replace("\\", "/"),
-            "-DPython_ROOT_DIR={}".format(sys.prefix).replace("\\", "/"),
-            "-DPython_ROOT={}".format(sys.prefix).replace("\\", "/"),
+            f'-DPYTHON_INCLUDE_DIR={sysconfig.get_config_var("INCLUDEPY")}'.replace(
+                "\\", "/"
+            ),
+            f"-DPython_ROOT_DIR={sys.prefix}".replace("\\", "/"),
+            f"-DPython_ROOT={sys.prefix}".replace("\\", "/"),
             "-DPSP_CMAKE_MODULE_PATH={folder}".format(
                 folder=os.path.join(ext.sourcedir, "cmake")
             ).replace("\\", "/"),
-            "-DPSP_CPP_SRC={folder}".format(folder=ext.sourcedir).replace("\\", "/"),
+            "-DPSP_CPP_SRC={folder}".format(folder=ext.sourcedir).replace(
+                "\\", "/"
+            ),
             "-DPSP_PYTHON_SRC={folder}".format(
                 folder=os.path.join(ext.sourcedir, "..", "perspective").replace(
                     "\\", "/"
                 )
             ),
         ]
+
 
         build_args = ["--config", cfg]
         env = os.environ.copy()
@@ -184,13 +185,14 @@ class PSPBuild(build_ext):
 
             cmake_args.extend(
                 [
-                    "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}".format(
-                        cfg.upper(), extdir
-                    ).replace("\\", "/"),
+                    f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}".replace(
+                        "\\", "/"
+                    ),
                     "-G",
                     os.environ.get("PSP_GENERATOR", msvc),
                 ]
             )
+
 
             vcpkg_toolchain_file = os.path.abspath(
                 os.environ.get(
@@ -202,27 +204,22 @@ class PSPBuild(build_ext):
             )
 
             if os.path.exists(vcpkg_toolchain_file):
-                cmake_args.append(
-                    "-DCMAKE_TOOLCHAIN_FILE={}".format(vcpkg_toolchain_file)
-                )
+                cmake_args.append(f"-DCMAKE_TOOLCHAIN_FILE={vcpkg_toolchain_file}")
 
             if sys.maxsize > 2**32:
                 # build 64 bit to match python
                 cmake_args += ["-A", "x64"]
 
-            build_args += [
-                "--",
-                "/m:{}".format(CPU_COUNT),
-                "/p:Configuration={}".format(cfg),
-            ]
+            build_args += ["--", f"/m:{CPU_COUNT}", f"/p:Configuration={cfg}"]
         else:
-            cmake_args += ["-DCMAKE_BUILD_TYPE=" + cfg]
+            cmake_args += [f"-DCMAKE_BUILD_TYPE={cfg}"]
             build_args += [
                 "--",
                 "-j2"
                 if os.environ.get("DOCKER", "")
-                else "-j{}".format(env.get("PSP_NUM_CPUS", CPU_COUNT)),
+                else f'-j{env.get("PSP_NUM_CPUS", CPU_COUNT)}',
             ]
+
 
         env["PSP_ENABLE_PYTHON"] = "1"
         env["OSX_DEPLOYMENT_TARGET"] = os.environ.get(
@@ -260,9 +257,7 @@ class PSPCheckSDist(sdist):
             path = os.path.abspath(os.path.join(here, "dist", file))
             if not os.path.exists(path):
                 raise Exception(
-                    "Path is missing! {}\nMust run `yarn build_python` before building sdist so cmake files are installed".format(
-                        path
-                    )
+                    f"Path is missing! {path}\nMust run `yarn build_python` before building sdist so cmake files are installed"
                 )
 
 
